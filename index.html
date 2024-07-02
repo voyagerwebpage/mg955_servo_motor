@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Akshat G">
+    <link rel="icon" href="favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="css/prism.css">
+    <link rel="stylesheet" href="css/style.css">
+    <title>MG955 Control Unit</title>
+</head>
+
+<body>
+    <header>
+        <h1>
+            MG955 Control using PCA9685
+        </h1>
+    </header>
+
+    <hr>
+
+    <main>
+        <section id="multiple_control_setup">
+            <h2>Multiple Servo Control Code: [CONNECTIVITY TEST]</h2>
+            <p>
+                The code provided below runs every single servo connected to the PCA9685 one at a time through a specified angle range
+                <br>
+                Some prerequisites to running this code is the installation of the <strong>&lt;Adafruit_PWMServoDriver.h&gt; header file</strong>, <a href="https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library" target="_blank">click here to download the &lt;Adafruit_PWMServoDriver.h&gt; header file</a>
+            </p>
+            <div class="container">
+                <div class="code-wrap">
+                    <pre>
+                <code id="code" class="language-cpp">
+                    #include &lt;Wire.h&gt;
+#include &lt;Adafruit_PWMServoDriver.h&gt;
+
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+
+
+// IMPORTANT: Please change the Min and Max value of the servo accordingly 
+#define SERVOMIN 125 // this is the 'minimum' pulse length count (out of 4096)
+#define SERVOMAX 575 // this is the 'maximum' pulse length count (out of 4096)
+
+// our servo # counter
+uint8_t servonum = 0;
+
+void setup()
+{
+    Serial.begin(9600);
+    Serial.println("16 channel Servo test");
+
+    pwm.begin();
+
+    // Analog servos run at ~60 Hz updates
+    pwm.setPWMFreq(60);
+
+    /*
+    Remove the comment below if the processes need more time to execute 
+    */
+    // yield();
+}
+
+
+void loop()
+{
+    // declaration and initialization 
+    /*
+    for any changes to the number of servos needed to be tested please
+    alter the 
+    1. number_of_servo_motors: [indexed servo motor numbers]
+    2. angle_start: servo initial position
+    3. angle_end: servo final position
+    */
+    int number_of_servo_motors = 16;
+    int angle_start = 0; 
+    int angle_end = 180;
+
+    // loop to iterate through all the servos
+    for (int i = 0; i < number_of_servo_motors; i++)
+    {
+        for (int angle = angle_start; angle <= angle_end; angle += 10)
+        {
+            delay(50);
+            pwm.setPWM(i, 0, angleToPulse(angle));
+        }
+    }
+
+    // wait for 1 second
+    delay(1000); 
+}
+
+/*
+/* angleToPulse(int ang)
+ * @brief gets angle in degree and returns the pulse width
+ * @param "ang" is integer representing angle from 0 to 180
+ * @return returns integer pulse width
+ * Usage to use 65 degree: angleToPulse(65);
+ */
+
+int angleToPulse(int ang)
+{
+    int pulse = map(ang, 0, 180, SERVOMIN, SERVOMAX); // map angle of 0 to 180 to Servo min and Servo max
+    Serial.print("Angle: ");
+    Serial.print(ang);
+    Serial.print(" pulse: ");
+    Serial.println(pulse);
+    return pulse;
+}
+                </code>
+            </pre>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>
+                Single Servo Control Code [CONNECTIVITY TEST]:
+            </h2>
+            <div class="container">
+                <div class="code-wrap">
+                    <pre>
+                <code id="code" class="language-cpp">
+                    #include &lt;Wire.h&gt;
+#include &lt;Adafruit_PWMServoDriver.h&gt;
+
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+
+// IMPORTANT: Please change the Min and Max value of the servo accordingly 
+#define SERVOMIN 125 // this is the 'minimum' pulse length count (out of 4096)
+#define SERVOMAX 575 // this is the 'maximum' pulse length count (out of 4096)
+
+// our servo # counter
+uint8_t servonum = 0;
+
+void setup()
+{
+    Serial.begin(9600);
+    Serial.println("16 channel Servo test!");
+
+    pwm.begin();
+
+    // Analog servos run at ~60 Hz updates
+    pwm.setPWMFreq(60);
+
+    /*
+    Remove the comment below if the processes need more time to execute 
+    */
+    // yield();
+}
+
+/**
+ * @brief: gets theta in degrees and rotates the servo to the specified angle
+ * @details: pwm.setPWM(servo_number, 0, pulse)
+ */
+void loop()
+{
+    /*
+    PENDING: Declaration and Initialization of 
+    1. servo_index
+    2. theta
+     */
+    pwm.setPWM(servo_index, 0, angleToPulse(theta));
+    delay(1000); 
+}
+
+/**
+ * angleToPulse(int ang)
+ * @brief gets angle in degree and returns the pulse width
+ * @param "ang" is integer representing angle from 0 to 180
+ * @return returns integer pulse width
+ * Usage to use 65 degree: angleToPulse(65);
+ */
+
+int angleToPulse(int ang)
+{
+    int pulse = map(ang, 0, 180, SERVOMIN, SERVOMAX); // map angle of 0 to 180 to Servo min and Servo max
+    Serial.print("Angle: ");
+    Serial.print(ang);
+    Serial.print(" pulse: ");
+    Serial.println(pulse);
+    return pulse;
+}
+                </code>
+            </pre>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <hr>
+
+    <footer>
+        <a href="#">Back to Top</a>
+        <br>
+        <br>
+        &lt;&lt;&lt; &copy;<a href="https://www.linkedin.com/in/akshat-gururaj/" target="_blank">Akshat
+            G</a>&gt;&gt;&gt;
+    </footer>
+</body>
+
+<script src="prism.js"></script>
+
+</html>
